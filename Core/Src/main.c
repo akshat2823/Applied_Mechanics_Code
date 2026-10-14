@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -41,7 +42,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -93,6 +93,9 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM3_Init();
   MX_ADC2_Init();
+  MX_I2C1_Init();
+  MX_TIM1_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -102,7 +105,205 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  count1++;
+	  count3++;
+	    if(state<99)
+	    {
+	 	  if((usart1RxBuff[0]==0x5b) && (usart1RxBuff[1]==0x05) && (usart1RxBuff[2]==0xef) && mode == LOCAL)
+	 	  {
+	 		  usart1RxBuff[0]=0;
+	 		  usart1RxBuff[1]=0;
+	 		  usart1RxBuff[2]=0;
 
+	 		  if(Output_Status==0)
+	 		  {
+	 			  Output_Status = 1;
+	 		  }
+	 		  else if(Output_Status==1)
+	 		  {
+	 			  Output_Status = 0;
+	 		  }
+	 	  }
+	    }
+
+	    //RM Key pressed
+	    if((state < 99) && (usart1RxBuff[0] == 0x5B) && (usart1RxBuff[1] == 0x09) &&(usart1RxBuff[2] == 0xef))
+	    {
+	 	    usart1RxBuff[0] = 0U;
+	 	    usart1RxBuff[1] = 0U;
+	 	    usart1RxBuff[2] = 0U;
+
+	 	    state = 101;
+
+	    }
+
+	 	  /* Bit 0 = ACF */
+	 	  if (ACF_Status == 1U)
+	 	  {
+	 	      SystemStatus |= (1U << 0);
+	 	  }
+	 	  else
+	 	  {
+	 	      SystemStatus &= ~(1U << 0);
+	 	  }
+
+
+	 	  /* Bit 1 = OTP */
+	 	  if (OTP_Status == 1U)
+	 	  {
+	 	      SystemStatus |= (1U << 1);
+	 	  }
+	 	  else
+	 	  {
+	 	      SystemStatus &= ~(1U << 1);
+	 	  }
+
+
+	 	  /* Bit 2 = FAN FAIL */
+	 	  if (FanFail_Status == 1U)
+	 	  {
+	 	      SystemStatus |= (1U << 2);
+	 	  }
+	 	  else
+	 	  {
+	 	      SystemStatus &= ~(1U << 2);
+	 	  }
+
+
+	 	  /* Bit 3 = OVERLOAD */
+	 	  if (Overload_Status == 1U)
+	 	  {
+	 	      SystemStatus |= (1U << 3);
+	 	  }
+	 	  else
+	 	  {
+	 	      SystemStatus &= ~(1U << 3);
+	 	  }
+
+
+	       if(SystemStatus>0)
+	       {
+	     	  state = 99;
+	       }
+
+	       if(count3 == 3000)
+	       {
+	     	  state = 101;
+	       }
+	 	  switch(state)
+	 	  {
+
+	 	  case(0):
+	 				if(count1>2000)
+	 			    {
+	 					display_update();
+	 					count1 = 0;
+	 			    }
+	 	  	  	  	  if(usart1RxBuff[0]==0x5b && usart1RxBuff[1]==0x01 && usart1RxBuff[2]==0xef)
+	 				  {
+	 					  state = 1;
+	 					  usart1RxBuff[0]=0;
+	 					  usart1RxBuff[1]=0;
+	 					  usart1RxBuff[2]=0;
+	 					  display_ISET();
+
+	 				  }
+
+	 	   break;
+
+	 	  case(1):      // Set Button Pressed
+	 	  				if(count2>50000000)
+	 	  			    {
+	 	  					//display_update();
+	 	  					count2 = 0;
+	 	  					state = 0;
+	 	  			    }
+	 	  	  	  	    count2++;
+
+	 	  	  	  	 if(usart1RxBuff[0]==0x5b && usart1RxBuff[1]==0x01 && usart1RxBuff[2]==0xef)
+	 				  {
+	 					  //state = 1;
+	 					  usart1RxBuff[0]=0;
+	 					  usart1RxBuff[1]=0;
+	 					  usart1RxBuff[2]=0;
+	 					  display_ISET();
+	 					  state = 0;
+
+	 				  }
+
+
+
+
+
+	 	  break;
+
+	 	  case(99) : if(count1>2000)
+	 					{
+	 		  	  	  	  Fault_Display();
+	 						count1 = 0;
+	 					}
+
+	 	  if(usart1RxBuff[0]==0x5b && usart1RxBuff[1]==0x05 && usart1RxBuff[2]==0xef)
+	 	 	  {
+	 	 		  usart1RxBuff[0]=0;
+	 	 		  usart1RxBuff[1]=0;
+	 	 		  usart1RxBuff[2]=0;
+
+	 	 		  state=0;
+	 	 	  }
+
+
+
+	 		break;
+
+	 	  case(101): // Handler for Remote button press
+	 	  {
+
+	 		    if ((usart1RxBuff[0] == 0x5B) && (usart1RxBuff[1] == 0x09) && (usart1RxBuff[2] == 0xEF))
+	 		    {
+	 		        usart1RxBuff[0] = 0U;
+	 		        usart1RxBuff[1] = 0U;
+	 		        usart1RxBuff[2] = 0U;
+
+	 		        if (mode == REMOTE)
+	 		        {
+	 		            mode = LOCAL;
+
+	 		            LedStatus = 0x02;
+	 		        }
+	 		        else
+	 		        {
+	 		            mode = REMOTE;
+
+	 		            LedStatus = 0x00;
+	 		        }
+
+	 		        state = 0;
+	 		    }
+	 		    else if ((usart1RxBuff[0] == 0x5B) && (usart1RxBuff[1] == 0x05) && (usart1RxBuff[2] == 0xEF))
+	 		    {
+	 		        usart1RxBuff[0] = 0U;
+	 		        usart1RxBuff[1] = 0U;
+	 		        usart1RxBuff[2] = 0U;
+
+	 		        if (mode == LOCAL)
+	 		        {
+	 		            if (Output_Status == 0U)
+	 		            {
+	 		                Output_Status = 1U;
+	 		            }
+	 		            else
+	 		            {
+	 		                Output_Status = 0U;
+	 		            }
+	 		        }
+	 		        state = 0;
+	 		    }
+
+	 		    break;
+	 	  }
+
+	 	  }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

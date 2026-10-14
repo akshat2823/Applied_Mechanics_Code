@@ -87,6 +87,16 @@ void Error_Handler(void);
 #define Local_on_off_GPIO_Port GPIOA
 #define Ref_select_Pin GPIO_PIN_15
 #define Ref_select_GPIO_Port GPIOA
+#define ADC_DOUT_Pin GPIO_PIN_11
+#define ADC_DOUT_GPIO_Port GPIOC
+#define ADC_DAC_SCK_Pin GPIO_PIN_12
+#define ADC_DAC_SCK_GPIO_Port GPIOC
+#define ADC_CS_Pin GPIO_PIN_2
+#define ADC_CS_GPIO_Port GPIOD
+#define ADC_DAC_IN_Pin GPIO_PIN_5
+#define ADC_DAC_IN_GPIO_Port GPIOB
+#define ADC_MCLK_Pin GPIO_PIN_6
+#define ADC_MCLK_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
