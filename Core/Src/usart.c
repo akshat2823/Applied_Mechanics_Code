@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
-#include <stdio.h>
 
 /* USER CODE BEGIN 0 */
 
@@ -39,6 +38,7 @@ uint16_t setCurrentValue;
 
 // ----------------Variables---------------------------
 uint32_t count1,count2,count3;
+
 uint8_t state=0;
 uint8_t Output_Status=0;
 uint8_t ACF_Status,OTP_Status,FanFail_Status,Overload_Status;
@@ -88,7 +88,7 @@ void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 9600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;

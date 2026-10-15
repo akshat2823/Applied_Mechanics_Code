@@ -89,6 +89,9 @@ extern uint8_t LedStatus;
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+void display_update();
+void display_ISET();
+void Fault_Display();
 
 /* USER CODE END Prototypes */
 

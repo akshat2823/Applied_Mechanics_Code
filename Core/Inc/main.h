@@ -32,6 +32,13 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "string.h"
+#include "stdio.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "ExternalADC.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -93,8 +100,8 @@ void Error_Handler(void);
 #define ADC_DAC_SCK_GPIO_Port GPIOC
 #define ADC_CS_Pin GPIO_PIN_2
 #define ADC_CS_GPIO_Port GPIOD
-#define ADC_DAC_IN_Pin GPIO_PIN_5
-#define ADC_DAC_IN_GPIO_Port GPIOB
+#define ADC_DAC_DIN_Pin GPIO_PIN_5
+#define ADC_DAC_DIN_GPIO_Port GPIOB
 #define ADC_MCLK_Pin GPIO_PIN_6
 #define ADC_MCLK_GPIO_Port GPIOB
 
